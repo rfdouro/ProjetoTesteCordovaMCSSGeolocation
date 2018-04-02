@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.web.clientproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/clientside-project/1">
+            <name>GeoLocationCordovaMCSS</name>
+        </data>
+        <libraries xmlns="http://www.netbeans.org/ns/cdnjs-libraries/1">
+            <library name="jquery" version="3.3.1">
+                <file localPath="www/js/libs/jquery/jquery.js" path="jquery.js"/>
+                <file localPath="www/js/libs/jquery/jquery.min.js" path="jquery.min.js"/>
+                <file localPath="www/js/libs/jquery/jquery.slim.min.map" path="jquery.slim.min.map"/>
+            </library>
+            <library name="materialize" version="1.0.0-beta">
+                <file localPath="www/js/libs/materialize/css/materialize.css" path="css/materialize.css"/>
+                <file localPath="www/js/libs/materialize/css/materialize.min.css" path="css/materialize.min.css"/>
+                <file localPath="www/js/libs/materialize/js/materialize.js" path="js/materialize.js"/>
+                <file localPath="www/js/libs/materialize/js/materialize.min.js" path="js/materialize.min.js"/>
+            </library>
+            <library name="openlayers" version="4.6.5">
+                <file localPath="www/js/libs/openlayers/ol-debug.css" path="ol-debug.css"/>
+                <file localPath="www/js/libs/openlayers/ol-debug.js" path="ol-debug.js"/>
+                <file localPath="www/js/libs/openlayers/ol.css" path="ol.css"/>
+                <file localPath="www/js/libs/openlayers/ol.js" path="ol.js"/>
+            </library>
+            <library name="proj4js" version="2.4.4">
+                <file localPath="www/js/libs/proj4js/proj4.js" path="proj4.js"/>
+            </library>
+        </libraries>
+    </configuration>
+</project>

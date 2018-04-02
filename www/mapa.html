@@ -1,0 +1,195 @@
+
+<link href="js/libs/openlayers/ol.css" rel="stylesheet" type="text/css"/>
+<div class="container">
+ <div class="section no-pad-bot" id="index-banner">
+  <div class="container">
+
+   <h4 class="header center orange-text">Mapa</h4>
+   <div class="row center">
+    <h5 class="header col s12 light">Usando openlayers</h5>
+    <button class="btn" id="btnAdd">Teste</button>
+   </div>
+   <div id="map" class="row center map">
+
+   </div>
+  </div>
+ </div>
+</div>
+
+<script src="js/libs/materialize/js/materialize.min.js" type="text/javascript"></script>
+<script src="js/libs/openlayers/ol.js" type="text/javascript"></script>
+<script src="js/libs/proj4js/proj4.js" type="text/javascript"></script>
+
+<script>
+
+ var view = new ol.View({
+  projection: "WGS84",
+  center: [-40.30774, -20.31229],
+  zoom: 4
+ });
+
+ //fundo do mapa
+ var source = new ol.source.OSM();
+
+ var bandeira = new ol.style.Style({
+  image: new ol.style.Icon({
+   anchor: [0.5, 1],
+   src: 'http://localhost:8383/GeoLocationCordovaMCSS/img/marcas/ponto_verde.png'
+  })
+ });
+
+ try {
+  //plataforma cordova
+  var bandeira = new ol.style.Style({
+   image: new ol.style.Icon({
+    anchor: [0.5, 1],
+    src: cordova.file.applicationDirectory + 'www/img/marcas/ponto_verde.png'
+   })
+  });
+ } catch (e) {
+  //alert('ERRO ' + e);
+ }
+
+ var estilos = {
+  'Point': bandeira
+ };
+
+ var funcaoEstilos = function (feature) {
+  return estilos[feature.getGeometry().getType()];
+ };
+
+ var vetorPontosJSON = new ol.source.Vector({
+  format: new ol.format.GeoJSON()
+ });
+
+ //vetorPontosJSON.clear();
+
+ var layerPontosJSON = new ol.layer.Vector({
+  projection: 'EPSG:4326',
+  source: vetorPontosJSON,
+  style: funcaoEstilos
+ });
+
+ var map = new ol.Map({
+  layers: [
+   new ol.layer.Tile({
+    source: source
+   })
+  ],
+  target: 'map',
+  view: view
+ });
+
+ map.addLayer(layerPontosJSON);
+
+
+ var geojsonObject = {
+  'type': 'FeatureCollection',
+  'crs': {
+   'type': 'name',
+   'properties': {
+    'name': 'EPSG:3857'
+   }
+  },
+  'features': []
+ };
+
+ /*
+  var vetorPontosJSON = new ol.source.Vector({
+  features: (new ol.format.GeoJSON()).readFeatures(geojsonObject)
+  });*/
+
+
+ var addGJSON = function () {
+  vetorPontosJSON.clear();
+  var feat = new ol.format.GeoJSON().readFeatures(geojsonObject);
+  vetorPontosJSON.addFeatures(feat);
+  zoomTo();
+ };
+
+
+
+ var limpaGSON = function () {
+  vetorPontosJSON.clear();
+ };
+
+
+ $("#btnAdd").on('click', function () {
+  limpaGSON();
+  getPosition();
+  //addGJSON();
+ });
+
+ /*
+  função para acertar a tela do mapa em relação aos pontos carregados
+  */
+ var zoomTo = function () {
+  /*if (vetorPontosJSON.getFeatures().length > 0) {
+   var somaX = 0, somaY = 0, contaX = 0, contaY = 0;
+   var minX = null, minY = null, maxX = null, maxY = null;
+   
+   for (i = 0; i < vetorPontosJSON.getFeatures().length; i++) {
+   var feature = vetorPontosJSON.getFeatures()[i];
+   var xmin = feature.getGeometry().getExtent()[0];
+   var ymin = feature.getGeometry().getExtent()[1];
+   var xmax = feature.getGeometry().getExtent()[2];
+   var ymax = feature.getGeometry().getExtent()[3];
+   if (minX == null || ((minX != null) && (minX > xmin))) {
+   minX = xmin;
+   }
+   if (minY == null || ((minY != null) && (minY > ymin))) {
+   minY = ymin;
+   }
+   if (maxX == null || ((maxX != null) && (maxX < xmax))) {
+   maxX = xmax;
+   }
+   if (maxY == null || ((maxY != null) && (maxY < ymax))) {
+   maxY = ymax;
+   }
+   }*/
+  var extent = vetorPontosJSON.getExtent();
+  view.fit(extent, map.getSize());
+  view.setZoom(view.getZoom() - 10);
+  //alert(''+minX+','+minY+' '+maxX+','+maxY);
+ };
+
+
+
+
+ function getPosition() {
+  var options = {
+   enableHighAccuracy: true,
+   maximumAge: 3000,
+   timeout: 5000
+  };
+  var watchID = navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
+
+  function onSuccess(position) {
+   try {
+    geojsonObject.features = [];
+    geojsonObject.features.push({
+     'type': 'Feature',
+     'geometry': {
+      'type': 'Point',
+      'coordinates': [position.coords.longitude, position.coords.latitude]
+     }
+    });
+
+    var feat = new ol.format.GeoJSON().readFeatures(geojsonObject);
+
+    vetorPontosJSON.addFeatures(feat);
+
+    zoomTo();
+
+   } catch (e) {
+    alert(e);
+   }
+  }
+  ;
+
+  function onError(error) {
+   alert('code: ' + error.code + '\n' + 'message: ' + error.message + '\n');
+  }
+ }
+</script>
+
